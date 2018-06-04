@@ -5,11 +5,22 @@
 #the same folder as this
 
 import os
+import grabber
 import time
 import subprocess
+from whichcraft import which
+import argparse
+import sys
+
+
+
 from urlgrabber.grabber import URLGrabber
 from urlgrabber.progress import text_progress_meter
 url = "http://174.109.47.119/files/alephone.snap"
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--override-snap-bugout", help="Overrides sanity check for snapcraft.", action="store_true")
+args = parser.parse_args()
 
 
 os.system('clear')
@@ -42,6 +53,26 @@ g = URLGrabber(reget='simple')
 local_file=g.urlgrab(url, filename='alephone.snap')
 print("DONE!")
 
-#print('Part 2: Detecting snapd Installation')
+def check_for_snap():
+    # Checks if snap is in the system PATH
+    if which('snap') is not None:
+        installmirata()
+    else:
+        bugout_nosnap()
+
+def bugout_nosnap():
+    #Checks if we are overriding the bugout
+    if args.override-snap-bugout is True:
+        installmirata()
+    else:
+        print("I can't seem to find snapcraft on this system. Either add it to your path, or use --override-snap-bugout to bypass this sanity check")
+        #Sweet Dreams
+        sys.exit()
+
+
+
+print('Part 2: Detecting snapd Installation')
+
+
 
 print('Part 3: Setting up Snap')
